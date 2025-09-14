@@ -288,7 +288,7 @@ export default function NotesPage() {
                   const proceed = confirm("Upgrade tenant to Pro now?");
                   if (proceed) upgradeTenant();
                 }}
-                className="bg-yellow-500 text-white rounded-md px-3 py-2 text-sm hover:bg-yellow-600"
+                className="bg-yellow-500 text-white rounded-md px-3 py-2 text-sm hover:bg-yellow-600 hover:cursor-pointer"
                 disabled={loading}
               >
                 Upgrade to Pro
@@ -297,7 +297,7 @@ export default function NotesPage() {
 
             <button
               onClick={handleLogout}
-              className="bg-zinc-800 text-white rounded-md px-3 py-2 text-sm hover:bg-zinc-900"
+              className="bg-zinc-800 text-white rounded-md px-3 py-2 text-sm hover:bg-zinc-900 hover:cursor-pointer"
             >
               Logout
             </button>
@@ -327,13 +327,13 @@ export default function NotesPage() {
                             ADMIN
                           </span>
                         )}
-                        {/* {n.owner && n.owner.email && (
-                          <span className="text-xs text-gray-500 ml-2">
-                            by {n.owner.email}
+                        {n.owner && n.owner.email && (
+                          <span className="text-xs text-gray-500 ">
+                             | {n.owner.email}
                           </span>
-                        )} */}
+                        )}
                       </div>
-                      <p className="text-sm text-gray-600 mt-1 max-w-100">{n.content}</p>
+                      <p className="text-sm text-gray-400 mt-1 max-w-100">{n.content}</p>
                     </div>
 
                     <div className="flex flex-col items-end space-y-2 ml-4">
@@ -345,6 +345,7 @@ export default function NotesPage() {
                               onClick={() => setEditingNote({ ...n })}
                               className="text-blue-600 text-sm hover:underline rounded-sm bg-zinc-800 hover:cursor-pointer hover:opacity-80"
                               disabled={loading}
+                              title="Edit this note"
                             >
                               <img src="/edit.png" className="h-6 w-6" alt="Edit" />
                               {/* Edit */}
@@ -353,6 +354,7 @@ export default function NotesPage() {
                               onClick={() => deleteNote(n.id)}
                               className="text-red-600 text-sm hover:underline hover:cursor-pointer hover:opacity-80"
                               disabled={loading}
+                              title="Delete this note"
                             >
                               <img src="/bin.png" className="h-5 w-5" alt="delete" />
                               {/* Delete */}
@@ -392,7 +394,7 @@ export default function NotesPage() {
                   />
                   <button
                     onClick={createNote}
-                    className="w-full bg-teal-600 text-white rounded-lg px-4 py-2 hover:bg-teal-700"
+                    className="w-full bg-teal-600 text-white rounded-lg px-4 py-2 hover:bg-teal-700 hover:cursor-pointer"
                     disabled={loading || (plan === "FREE" && notes.length >= 3)}
                   >
                     Add Note
@@ -429,14 +431,14 @@ export default function NotesPage() {
                   <div className="flex space-x-2">
                     <button
                       onClick={updateNote}
-                      className="bg-teal-600 text-white rounded-lg px-4 py-2 hover:bg-teal-700"
+                      className="bg-teal-600 text-white rounded-lg px-4 py-2 hover:bg-teal-700 hover:cursor-pointer"
                       disabled={loading}
                     >
                       Save
                     </button>
                     <button
                       onClick={() => setEditingNote(null)}
-                      className="bg-gray-300 text-gray-800 rounded-lg px-4 py-2 hover:bg-gray-400"
+                      className="bg-gray-300 text-gray-800 rounded-lg px-4 py-2 hover:bg-gray-400 hover:cursor-pointer"
                       disabled={loading}
                     >
                       Cancel
@@ -459,7 +461,7 @@ export default function NotesPage() {
                 />
                 <button
                   onClick={inviteUser}
-                  className="w-full bg-teal-600 text-white rounded-lg px-4 py-2 hover:bg-teal-700"
+                  className="w-full bg-teal-600 text-white rounded-lg px-4 py-2 hover:bg-teal-700 hover:cursor-pointer"
                   disabled={loading}
                 >
                   Invite
