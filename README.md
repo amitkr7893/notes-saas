@@ -1,36 +1,91 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Multi-Tenant Notes App
 
-## Getting Started
+This is a **multi-tenant notes application** built with **Next.js (App Router)**, **Prisma**, and **Neon PostgreSQL**.  
+Users can create, view, edit, and delete notes inside their tenant (organization).  
+The app also has subscription limits (Free vs Pro) and role-based permissions (Admin vs User).
 
-First, run the development server:
+---
+
+## Features
+
+- **Multi-tenancy**
+  - Every user belongs to a tenant.
+  - Notes are always scoped to the tenant.
+
+- **Authentication & Authorization**
+  - JWT-based authentication using `Bearer <token>`.
+  - Tenants can be on either `FREE` or `PRO` plan.
+
+- **Subscription Plans**
+  - Free plan → up to **3 notes**.
+  - Pro plan → unlimited notes.
+
+- **Role-based Access**
+  - Admin → can edit or delete any note in the tenant.
+  - User → can edit or delete only their own notes.
+  - These rules are checked on the backend (API layer).
+
+- **Frontend**
+  - Form to add new notes.
+  - List of notes with owner information.
+  - Loader overlay while API requests run.
+
+- **Backend API**
+  - `GET /api/notes` → list notes + tenant info.
+  - `POST /api/notes` → create a note (plan limit enforced).
+  - `PUT /api/notes/:id` → update a note (owner or admin only).
+  - `DELETE /api/notes/:id` → delete a note (owner or admin only).
+  - `OPTIONS` handler included for CORS.
+
+---
+
+## Chosen Approach
+
+1. **Multi-tenant design**  
+   - Each user is tied to a `tenantId`.  
+   - Notes are stored with both `tenantId` and `ownerId`.  
+   - API queries always filter by `tenantId` so data is separated per tenant.  
+
+2. **Subscription enforcement**  
+   - When creating a note, backend checks the tenant’s plan.  
+   - Free tenants cannot create more than 3 notes.  
+
+3. **Authorization rules**  
+   - The backend checks who is allowed to edit or delete a note.  
+   - Only the note owner or an admin can perform those actions.  
+
+4. **Loading state UX**  
+   - When network requests are in progress, a dimmed overlay with a spinner is shown.  
+
+---
+
+## Tech Stack
+
+- **Next.js 14+ (App Router)**
+- **React (client components)**
+- **Prisma ORM**
+- **Neon PostgreSQL**
+- **JWT for authentication**
+- **TailwindCSS** for styling
+
+---
+
+## Installation
 
 ```bash
+# 1. Clone the repository
+git clone <repo-url>
+cd notes-app
+
+# 2. Install dependencies
+npm install
+
+# 3. Add environment variables to a `.env` file
+DATABASE_URL="postgresql://<user>:<password>@<host>/<database>?sslmode=require"
+JWT_SECRET="your-secret"
+
+# 4. Run Prisma migrations
+npx prisma migrate dev --name init
+
+# 5. Start the development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
