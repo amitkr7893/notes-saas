@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
+import { setCorsHeaders } from "@/lib/cors";
 import jwt from "jsonwebtoken";
 
 const prisma = new PrismaClient();
@@ -14,21 +15,43 @@ function getUserFromAuth(req) {
   }
 }
 
+// Handle CORS preflight
+export async function OPTIONS() {
+  const res = NextResponse.json({}, { status: 200 });
+  setCorsHeaders(res);
+  return res;
+}
+
 export async function GET(req, { params }) {
   const user = getUserFromAuth(req);
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!user) {
+    const res = NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    setCorsHeaders(res);
+    return res;
+  }
 
   const note = await prisma.note.findFirst({
     where: { id: params.id, tenantId: user.tenantId },
   });
 
-  if (!note) return NextResponse.json({ error: "Not found" }, { status: 404 });
-  return NextResponse.json(note);
+  if (!note) {
+    const res = NextResponse.json({ error: "Not found" }, { status: 404 });
+    setCorsHeaders(res);
+    return res;
+  }
+
+  const res = NextResponse.json(note);
+  setCorsHeaders(res);
+  return res;
 }
 
 export async function PUT(req, { params }) {
   const user = getUserFromAuth(req);
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!user) {
+    const res = NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    setCorsHeaders(res);
+    return res;
+  }
 
   const { title, content } = await req.json();
   const note = await prisma.note.updateMany({
@@ -36,18 +59,36 @@ export async function PUT(req, { params }) {
     data: { title, content },
   });
 
-  if (!note.count) return NextResponse.json({ error: "Not found" }, { status: 404 });
-  return NextResponse.json({ success: true });
+  if (!note.count) {
+    const res = NextResponse.json({ error: "Not found" }, { status: 404 });
+    setCorsHeaders(res);
+    return res;
+  }
+
+  const res = NextResponse.json({ success: true });
+  setCorsHeaders(res);
+  return res;
 }
 
 export async function DELETE(req, { params }) {
   const user = getUserFromAuth(req);
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!user) {
+    const res = NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    setCorsHeaders(res);
+    return res;
+  }
 
   const deleted = await prisma.note.deleteMany({
     where: { id: params.id, tenantId: user.tenantId },
   });
 
-  if (!deleted.count) return NextResponse.json({ error: "Not found" }, { status: 404 });
-  return NextResponse.json({ success: true });
+  if (!deleted.count) {
+    const res = NextResponse.json({ error: "Not found" }, { status: 404 });
+    setCorsHeaders(res);
+    return res;
+  }
+
+  const res = NextResponse.json({ success: true });
+  setCorsHeaders(res);
+  return res;
 }
