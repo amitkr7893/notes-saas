@@ -89,3 +89,12 @@ npx prisma migrate dev --name init
 
 # 5. Start the development server
 npm run dev
+
+```
+## For check dummy data email
+    - user@globex.test
+    - admin@globex.test
+    - user@acme.test
+    - admin@acme.test
+## and password
+    - password
